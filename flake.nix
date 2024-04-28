@@ -8,7 +8,7 @@
   outputs = { self, nixpkgs }:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      pythonPackages = pkgs.python312.withPackages (ps: [ ]);
+      pythonPackages = pkgs.python312.withPackages (ps: with ps; [ torch ]);
     in
     {
       devShell.x86_64-linux = pkgs.mkShell {
