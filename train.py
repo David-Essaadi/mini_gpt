@@ -16,7 +16,7 @@ validation_data = data[n:]
 
 # Hyperparameters
 context_length = 256
-learning_rate = 3e-4
+learning_rate = 1e-5
 batch_size = 64
 max_steps = 5000
 eval_interval = 100
@@ -47,6 +47,7 @@ def get_batch(split):
 
 
 m = Transformer(tokenizer.vocab_size, context_length)
+m.load_state_dict(torch.load("output/model.pt"))
 
 optimizer = torch.optim.AdamW(m.parameters(), lr=learning_rate)
 for step in range(max_steps):

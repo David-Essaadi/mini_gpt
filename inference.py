@@ -18,5 +18,5 @@ def streamer(tokens):
     print(tokenizer.decode(tokens), end="")
 
 inputs = torch.zeros((1, 1), dtype=torch.long, device=device)
-while True:
-    model.generate(inputs, 1000, streamer)
+# while True:
+model.generate(inputs, 5000, top_k = 10, streamer=streamer)

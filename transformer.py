@@ -110,11 +110,14 @@ class Transformer(nn.Module):
             loss = F.cross_entropy(logits, targets)
         return logits, loss
 
-    def generate(self, inputs, max_new_tokens, streamer):
+    def generate(self, inputs, max_new_tokens, top_k = 0, streamer = None):
         for _ in range(max_new_tokens):
             current_inputs = inputs[:, -self.context_length :]
             logits, _loss = self(current_inputs)
             logits = logits[:, -1, :]
+            if top_k > 0:
+                mask = logits < torch.topk(logits, top_k)[0][..., -1, None]
+                logits = torch.masked_fill(logits, mask, float('-inf'))
             probs = F.softmax(logits, dim=1)
             next_token = torch.multinomial(probs, num_samples=1)
             if streamer:
