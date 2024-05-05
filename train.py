@@ -8,7 +8,7 @@ with open("input.txt", "r", encoding="ascii") as f:
     text = f.read()
 
 tokenizer = Tokenizer(sorted(set(text)))
-
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 data = torch.tensor(tokenizer.encode(text), dtype=torch.long)
 n = int(0.9 * len(data))
 train_data = data[:n]
@@ -41,8 +41,8 @@ def estimate_loss():
 def get_batch(split):
     data = train_data if split == "train" else validation_data
     random_indexes = torch.randint(len(data) - context_length, (batch_size,))
-    x = torch.stack([data[i : i + context_length] for i in random_indexes])
-    y = torch.stack([data[i + 1 : i + context_length + 1] for i in random_indexes])
+    x = torch.stack([data[i : i + context_length] for i in random_indexes]).to(device)
+    y = torch.stack([data[i + 1 : i + context_length + 1] for i in random_indexes]).to(device)
     return x, y
 
 
@@ -50,7 +50,6 @@ m = Transformer(tokenizer.vocab_size, context_length)
 
 optimizer = torch.optim.AdamW(m.parameters(), lr=learning_rate)
 for step in range(max_steps):
-    print(step)
     if step % eval_interval == 0:
         losses = estimate_loss()
         print(
