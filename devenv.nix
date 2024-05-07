@@ -14,6 +14,8 @@
     };
   };
   enterShell = ''
-    export LD_PRELOAD="/run/opengl-driver/lib/libcuda.so"
+    if [ -f /run/opengl-driver/lib/libcuda.so ]; then
+      export LD_PRELOAD="/run/opengl-driver/lib/libcuda.so"
+    fi
   '';
 }
